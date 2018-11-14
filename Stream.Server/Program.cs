@@ -41,21 +41,40 @@ namespace Stream.Server
                     videoSettings,
                     data => { bytes = data; }, 
                     () => { isExited = true; });
+
+                //var serverSocket = 
+                //    new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                //serverSocket.Bind(new IPEndPoint(IPAddress.Any, 8080));
+                //serverSocket.Listen(4);
+                //while (true)
+                //{
+                //    var handler = serverSocket.Accept();
+                //    Console.WriteLine("Received connection");
+                //    var receivedBytes = new byte[1024];
+                //    handler.Receive(receivedBytes);
+                //    if (bytes != null)
+                //    {
+                //        handler.Send(bytes);
+                //    }
+                //}
                 var listener = new TcpListener(IPAddress.Any, 8080);
                 listener.Start();
                 Console.WriteLine("Server started...");
-                //Console.ReadLine();
+                ////Console.ReadLine();
 
                 TcpClient client;
                 while (true)
                 {
                     client = listener.AcceptTcpClient();
                     Console.WriteLine("Client Connected...");
-                    var str = client.GetStream();
+                    var stream = client.GetStream();
                     while (true)
                     {
-                        Console.WriteLine("Writing...");
-                        str.Write(bytes, 0, bytes.Length);
+                        if (client.Connected)
+                        {
+                            Console.WriteLine("Writing...");
+                            stream.WriteAsync(bytes);
+                        }
                     }
                 }
             }
